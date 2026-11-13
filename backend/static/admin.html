@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShikshaFlow · School Operations & Admin</title>
+<style>
+:root{--blue:#2f55e6;--blue-ink:#1e3bb0;--ink:#15243f;--muted:#5f6e88;--soft:#8593ab;--line:#e3e9f3;--bg:#f4f7fc;--card:#fff;--green:#0f7a5f;--green-bg:#e6f6ef;--amber:#9a5a05;--amber-bg:#fff2d9;--red:#c13b43;--red-bg:#fdecec;--blue-bg:#e9f0ff;--radius:12px;--shadow:0 1px 2px rgba(20,36,63,.04),0 8px 24px -16px rgba(20,36,63,.25)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid #9db4ff;outline-offset:2px;border-radius:8px}
+.hidden{display:none!important}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:30px;width:100%;max-width:400px}
+.login .logo{background:var(--blue);color:#fff;border-radius:12px;width:46px;height:46px;display:grid;place-items:center;font-weight:800;font-size:20px;margin-bottom:14px}
+.login h1{font-size:21px;margin:0 0 2px}.login p{color:var(--muted);margin:0 0 20px;font-size:13px}
+.hint{background:var(--blue-bg);color:var(--blue-ink);border-radius:9px;padding:10px 12px;font-size:12px;margin-top:16px}
+.app{display:flex;min-height:100vh}
+.side{width:240px;background:var(--card);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:17px;padding:4px 8px 18px}
+.brand .logo{background:var(--blue);color:#fff;border-radius:10px;padding:7px 11px}
+.brand small{display:block;font-size:10px;color:var(--muted);font-weight:500}
+.nav button{width:100%;border:0;background:transparent;text-align:left;color:#4b5a76;padding:10px 12px;border-radius:10px;margin:2px 0;font-weight:650;min-height:42px}
+.nav button.active,.nav button:hover{background:var(--blue-bg);color:var(--blue-ink)}
+.side .foot{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;font-size:12px;color:var(--muted)}
+.main{flex:1;min-width:0}
+.top{height:62px;background:var(--card);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:0 22px;position:sticky;top:0;z-index:3}
+.top .who{font-size:13px;color:var(--muted)}
+.content{max-width:1200px;margin:auto;padding:22px}
+.head{margin-bottom:18px}.head h1{margin:0 0 4px;font-size:23px}.head p{margin:0;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.stat-label{color:var(--muted);font-size:12.5px;font-weight:600}.stat-val{font-size:28px;font-weight:800;margin-top:4px;letter-spacing:-1px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:700;min-height:40px;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.btn:hover{border-color:#c9d4e8}.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.primary:hover{background:var(--blue-ink)}
+.btn.small{padding:5px 9px;min-height:32px;font-size:12.5px}.btn.danger{color:var(--red);border-color:#f1c7c9}.btn:disabled{opacity:.5;cursor:not-allowed}
+label{font-size:12.5px;font-weight:700;color:#3a4a68;display:block;margin-bottom:5px}
+input,select,textarea{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;min-height:40px;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px #d9e3ff}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.filters>div{min-width:150px}
+.table{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:540px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{background:#f8fafd;font-size:11.5px;letter-spacing:.3px;color:var(--muted);text-transform:uppercase}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;background:#eef2f8;color:#4b5a76}
+.tag.green{background:var(--green-bg);color:var(--green)}.tag.amber{background:var(--amber-bg);color:var(--amber)}.tag.red{background:var(--red-bg);color:var(--red)}.tag.blue{background:var(--blue-bg);color:var(--blue-ink)}
+.progress{height:7px;background:#eef2f8;border-radius:999px;overflow:hidden;margin-top:5px}.progress span{display:block;height:100%;background:var(--blue)}
+.notice{background:var(--amber-bg);border:1px solid #f0ddb0;color:#7a4c08;border-radius:10px;padding:11px 13px;font-size:13px;margin-bottom:16px}
+.usp-card{background:linear-gradient(135deg,#203eb6,#4966e6);color:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.usp-card h2{color:#fff;margin:0 0 6px;font-size:18px}.usp-card p{color:#d5e0ff;margin:0 0 12px;font-size:13px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:#15243f;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.err{background:#8f2a30}
+@media(max-width:800px){.side{position:fixed;transform:translateX(-105%);z-index:20;transition:.2s}.side.open{transform:none}.mobile-btn{display:inline-flex!important}}
+.mobile-btn{display:none;border:1px solid var(--line);background:#fff;border-radius:10px;width:40px;height:40px;font-size:18px;align-items:center;justify-content:center}
+@media print{.side,.top,.filters,.btn,button,.no-print{display:none!important}.content{padding:0}.card{border:0;box-shadow:none}}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginView">
+  <form class="login" id="loginForm">
+    <div class="logo">S</div>
+    <h1>ShikshaFlow</h1>
+    <p>Sign in to manage classroom duties and school records.</p>
+    <div style="margin-bottom:12px"><label for="u">Username</label><input id="u" autocomplete="username" value="teacher" required></div>
+    <div style="margin-bottom:16px"><label for="p">Password</label><input id="p" type="password" autocomplete="current-password" value="teach123" required></div>
+    <button class="btn primary" type="submit" style="width:100%">Sign in</button>
+    <div class="hint">Demo shortcuts: <b>teacher</b> / teach123 · <b>admin</b> / admin123 · <b>officer</b> / officer123</div>
+  </form>
+</div>
+
+<div class="app hidden" id="appView">
+  <aside class="side" id="side">
+    <div class="brand"><span class="logo">S</span><span>ShikshaFlow<small>Teach-Time Reclaim™</small></span></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="foot" id="foot"></div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <div style="display:flex;align-items:center;gap:12px"><button class="mobile-btn" onclick="document.getElementById('side').classList.toggle('open')">☰</button><strong id="crumb">Dashboard</strong></div>
+      <div style="display:flex;align-items:center;gap:14px"><span class="who" id="who"></span><button class="btn small" onclick="logout()">Sign out</button></div>
+    </header>
+    <div class="content" id="view"></div>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+const TKEY='sf_admin_token', UKEY='sf_admin_user';
+let token=localStorage.getItem(TKEY)||null;
+let me=JSON.parse(localStorage.getItem(UKEY)||'null');
+let page='dashboard', schoolsCache=[];
+let attState={};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function notify(m,err){const t=$('#toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(window._t);window._t=setTimeout(()=>t.className='toast',3200);}
+
+async function api(path,opts={}){
+  const o={headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts};
+  if(token)o.headers.Authorization='Bearer '+token;
+  const res=await fetch(path,o);
+  if(res.status===401){logout();throw new Error('Session expired. Please sign in again.');}
+  let data=null;try{data=await res.json();}catch(e){}
+  if(!res.ok){throw new Error((data&&(data.detail||data.message))||('Request failed ('+res.status+')'));}
+  return data;
+}
+
+$('#loginForm').onsubmit=async e=>{
+  e.preventDefault();
+  try{
+    const data=await api('/api/auth/login',{method:'POST',body:JSON.stringify({username:$('#u').value.trim(),password:$('#p').value})});
+    token=data.access_token;me=data.user;
+    localStorage.setItem(TKEY,token);localStorage.setItem(UKEY,JSON.stringify(me));
+    enterApp();
+  }catch(err){notify(err.message,true);}
+};
+function logout(){token=null;me=null;localStorage.removeItem(TKEY);localStorage.removeItem(UKEY);$('#appView').classList.add('hidden');$('#loginView').classList.remove('hidden');}
+
+const TABS={
+  dashboard:{label:'Dashboard',roles:['admin','officer','teacher','headmaster']},
+  attendance:{label:'Attendance',roles:['admin','officer','teacher','headmaster']},
+  meals:{label:'Mid-Day Meals',roles:['admin','officer','teacher','headmaster']},
+  students:{label:'Students',roles:['admin','officer','teacher','headmaster']},
+  reports:{label:'Smart Reports',roles:['admin','officer','teacher','headmaster']},
+  schools:{label:'Schools',roles:['admin','officer']},
+  officer:{label:'Officer View',roles:['admin','officer','headmaster']},
+  users:{label:'Users',roles:['admin']},
+  audit:{label:'Audit Log',roles:['admin']},
+};
+function allowedTabs(){return Object.keys(TABS).filter(k=>TABS[k].roles.includes(me.role));}
+function enterApp(){
+  $('#loginView').classList.add('hidden');$('#appView').classList.remove('hidden');
+  $('#who').textContent=me.full_name?`${me.full_name} (${me.role})`:me.role;
+  $('#foot').textContent=`Signed in as ${me.username}`;
+  const tabs=allowedTabs();
+  $('#nav').innerHTML=tabs.map(k=>`<button data-tab="${k}">${TABS[k].label}</button>`).join('');
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+  page=tabs.includes(page)?page:tabs[0];
+  go(page);
+}
+function go(p){page=p;document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===p));$('#crumb').textContent=TABS[p].label;$('#side').classList.remove('open');render();}
+
+function head(t,s){return `<div class="head"><h1>${esc(t)}</h1><p>${esc(s)}</p></div>`;}
+function stat(l,v){return `<div class="card"><div class="stat-label">${esc(l)}</div><div class="stat-val">${v}</div></div>`;}
+const canManageAllSchools=()=>me.role==='admin'||me.role==='officer';
+async function loadSchools(){schoolsCache=await api('/api/schools');return schoolsCache;}
+function schoolOptions(sel){return schoolsCache.map(s=>`<option value="${s.id}" ${s.id===sel?'selected':''}>${esc(s.name)}</option>`).join('');}
+function defaultSchoolId(){if(me.school_id)return me.school_id;return schoolsCache[0]?schoolsCache[0].id:null;}
+function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+async function render(){
+  const v=$('#view');v.innerHTML='<div class="card"><div class="empty">Loading…</div></div>';
+  try{
+    if(page==='dashboard')return viewDashboard(v);
+    if(page==='attendance')return viewAttendance(v);
+    if(page==='meals')return viewMeals(v);
+    if(page==='students')return viewStudents(v);
+    if(page==='reports')return viewReports(v);
+    if(page==='schools')return viewSchools(v);
+    if(page==='officer')return viewOfficer(v);
+    if(page==='users')return viewUsers(v);
+    if(page==='audit')return viewAudit(v);
+  }catch(err){v.innerHTML=`<div class="card"><div class="empty">${esc(err.message)}</div></div>`;}
+}
+
+// ---- Dashboard ----
+async function viewDashboard(v){
+  if(me.role==='admin'){
+    const s=await api('/api/admin/stats');
+    const audit=await api('/api/admin/audit?limit=6');
+    v.innerHTML=head('System Dashboard','System overview and recent activity.')
+      +`<div class="grid stats">${stat('Schools',s.schools)}${stat('Users',s.users)}${stat('Active Students',s.students)}${stat('Attendance Records',s.attendance_records)}${stat('Meal Records',s.meal_records)}</div>
+        <div class="card" style="margin-top:16px"><h2>Recent activity</h2>${auditTable(audit)}</div>`;
+  }else if(me.role==='teacher'||me.role==='headmaster'){
+    const sum=await api('/api/teacher/summary');
+    const tt=sum.teach_time;
+    v.innerHTML=head('Good Morning 👋',`${sum.school_name} · ${sum.today}`)
+      +`<div class="usp-card" style="margin-bottom:16px">
+          <span class="tag" style="background:#e0e8ff;color:#1e3bb0;margin-bottom:8px">Teach-Time Reclaim™</span>
+          <h2>${Math.floor(tt.minutes_all_time/60)}h ${tt.minutes_all_time%60}m Reclaimed for Instruction</h2>
+          <p>Next Best Action: <b>${esc(sum.next_best_action)}</b></p>
+          <div style="display:flex;gap:20px;font-size:13px;flex-wrap:wrap">
+            <div>Today: <b>${tt.minutes_today}m saved</b></div>
+            <div>This Week: <b>${tt.minutes_this_week}m saved</b></div>
+            <div>Completed Days: <b>${tt.attendance_days} attendance, ${tt.meal_days} meals</b></div>
+          </div>
+        </div>
+        <div class="grid stats">
+          ${stat('Active Students',sum.total_students)}
+          ${stat('Present Today',sum.present_today)}
+          ${stat('Absent Today',sum.absent_today)}
+          ${stat('Today Completion',sum.attendance_completion_pct+'%')}
+        </div>
+        <div class="card" style="margin-top:16px">
+          <h2>Pending Administrative Duties</h2>
+          <div style="display:grid;gap:10px;margin-top:10px">
+            ${sum.pending_tasks.map(t=>`
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid var(--line);border-radius:10px">
+                <div><strong>${esc(t.title)}</strong><div style="font-size:12.5px;color:var(--muted)">${esc(t.desc)}</div></div>
+                <div style="display:flex;gap:10px;align-items:center">
+                  <span class="tag ${t.completed?'green':'amber'}">${t.completed?'Completed':'Pending'}</span>
+                  <button class="btn small" onclick="go('${t.action_tab}')">Open →</button>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+  }else{
+    const sum=await api('/api/officer/summary');
+    v.innerHTML=head('Officer Dashboard','District school completion and compliance overview.')
+      +`<div class="grid stats">${stat('Schools in view',sum.schools.length)}${stat('Avg. completion',sum.avg_completion+'%')}${stat('Missing days',sum.total_missing)}${stat('Needs follow-up',sum.needs_followup)}</div>
+        <div class="card" style="margin-top:16px"><h2>Quick action</h2><button class="btn primary" onclick="go('officer')">Inspect All Schools →</button></div>`;
+  }
+}
+
+function auditTable(rows){
+  if(!rows.length)return '<div class="empty">No activity yet.</div>';
+  return `<div class="table"><table><thead><tr><th>When</th><th>User</th><th>Action</th><th>Detail</th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(new Date(a.at).toLocaleString())}</td><td>${esc(a.username)}</td><td><span class="tag blue">${esc(a.action)}</span></td><td>${esc(a.detail)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// ---- Attendance ----
+async function viewAttendance(v){
+  await loadSchools();
+  const sid=window._attSchool||defaultSchoolId();window._attSchool=sid;
+  const date=window._attDate||today();window._attDate=date;
+  const data=sid?await api(`/api/attendance?school_id=${sid}&date=${date}`):null;
+  const students=sid?await api('/api/students?school_id='+sid):[];
+  const picker=canManageAllSchools()?`<div><label>School</label><select onchange="window._attSchool=Number(this.value);render()">${schoolOptions(sid)}</select></div>`:'';
+
+  attState={...(data?data.entries:{})};
+  students.forEach(s=>{if(!attState[s.id])attState[s.id]='unmarked';});
+  const c=data?data.counts:{total:students.length,present:0,absent:0,leave:0,pending:students.length};
+
+  v.innerHTML=head('Student Attendance','Mark roll call once. Records update automatically across reports.')
+    +`<div class="card" style="margin-bottom:16px">
+        <div class="filters">
+          ${picker}
+          <div><label>Date</label><input type="date" max="${today()}" value="${date}" onchange="window._attDate=this.value;render()"></div>
+          <button class="btn" onclick="markAllAtt('present')">Mark All Present</button>
+          <button class="btn primary" onclick="saveAtt()">Save Attendance</button>
+        </div>
+        <div class="grid stats" style="margin-bottom:14px">
+          ${stat('Total Roster',students.length)}
+          ${stat('Present',c.present)}
+          ${stat('Absent',c.absent)}
+          ${stat('On Leave',c.leave||0)}
+          ${stat('Unmarked',c.pending)}
+        </div>
+        <div class="table">
+          <table>
+            <thead><tr><th>Student</th><th>Class</th><th>Current Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${students.map(s=>{
+                const st=attState[s.id]||'unmarked';
+                const tag=st==='present'?'<span class="tag green">Present</span>':st==='absent'?'<span class="tag red">Absent</span>':st==='leave'?'<span class="tag amber">Leave</span>':'<span class="tag">Not marked</span>';
+                return `<tr id="row_${s.id}">
+                  <td><b>${esc(s.name)}</b></td>
+                  <td>${esc(s.cls)}</td>
+                  <td id="tag_${s.id}">${tag}</td>
+                  <td>
+                    <button class="btn small" onclick="setAtt(${s.id},'present')">Present</button>
+                    <button class="btn small" onclick="setAtt(${s.id},'absent')">Absent</button>
+                    <button class="btn small" onclick="setAtt(${s.id},'leave')">Leave</button>
+                    <button class="btn small" onclick="setAtt(${s.id},'unmarked')">Clear</button>
+                  </td>
+                </tr>`;
+              }).join('')||`<tr><td colspan="4" class="empty">No students found.</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+        <p class="stat-label" style="margin-top:12px">${data&&data.saved?'✓ Record saved for this date.':'⚠ Record not yet saved for this date.'}</p>
+      </div>`;
+}
+
+function setAtt(id,status){
+  attState[id]=status;
+  const tagEl=$('#tag_'+id);
+  if(tagEl){
+    tagEl.innerHTML=status==='present'?'<span class="tag green">Present</span>':status==='absent'?'<span class="tag red">Absent</span>':status==='leave'?'<span class="tag amber">Leave</span>':'<span class="tag">Not marked</span>';
+  }
+}
+function markAllAtt(status){
+  Object.keys(attState).forEach(id=>setAtt(id,status));
+  notify('All students set to '+status+'. Click "Save Attendance" to commit.');
+}
+async function saveAtt(){
+  const entries=Object.keys(attState).map(id=>({student_id:Number(id),status:attState[id]}));
+  const un=entries.filter(e=>e.status==='unmarked').length;
+  if(un>0&&!confirm(`${un} student(s) are unmarked. Save anyway?`))return;
+  try{
+    await api('/api/attendance',{method:'POST',body:JSON.stringify({date:window._attDate||today(),school_id:window._attSchool,entries})});
+    notify('Attendance saved successfully! Teach-Time Reclaimed.');
+    render();
+  }catch(e){notify(e.message,true);}
+}
+
+// ---- Mid-Day Meals ----
+async function viewMeals(v){
+  await loadSchools();
+  const sid=window._mealSchool||defaultSchoolId();window._mealSchool=sid;
+  const meals=sid?await api('/api/meals?school_id='+sid):[];
+  const picker=canManageAllSchools()?`<div><label>School</label><select onchange="window._mealSchool=Number(this.value);render()">${schoolOptions(sid)}</select></div>`:'';
+  const total=meals.reduce((a,m)=>a+m.qty,0);
+
+  v.innerHTML=head('Mid-Day Meal Management','Log daily meals served and inspect historical summaries.')
+    +`<div class="card" style="margin-bottom:16px">
+        <h2>Record Daily Meal</h2>
+        <div class="formgrid">
+          <div><label>Date *</label><input type="date" id="mDate" value="${today()}" max="${today()}"></div>
+          <div><label>Meals Served *</label><input type="number" id="mQty" min="0" placeholder="e.g. 125" required></div>
+          <div><label>Menu Details</label><input id="mMenu" placeholder="e.g. Dal, Khichdi, Sabji" maxlength="120"></div>
+          <div><label>Notes (optional)</label><input id="mNotes" placeholder="Remarks" maxlength="255"></div>
+        </div>
+        <button class="btn primary" onclick="addMeal()">Save Meal Record</button>
+      </div>
+      <div class="card">
+        <div class="filters">${picker}</div>
+        <div class="grid stats" style="margin-bottom:14px">
+          ${stat('Days Recorded',meals.length)}
+          ${stat('Total Meals Served',total.toLocaleString('en-IN'))}
+          ${stat('Daily Average',meals.length?Math.round(total/meals.length):0)}
+        </div>
+        <div class="table">
+          <table>
+            <thead><tr><th>Date</th><th>Meals</th><th>Menu</th><th>Notes</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${meals.map(m=>`<tr>
+                <td>${esc(m.date)}</td>
+                <td><b>${m.qty.toLocaleString('en-IN')}</b></td>
+                <td>${esc(m.menu||'—')}</td>
+                <td>${esc(m.notes||'—')}</td>
+                <td><button class="btn small danger" onclick="delMeal(${m.id})">Delete</button></td>
+              </tr>`).join('')||`<tr><td colspan="5" class="empty">No meal records found.</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+}
+
+async function addMeal(){
+  const date=$('#mDate').value, qty=Number($('#mQty').value);
+  if(!date||isNaN(qty)||qty<0){notify('Valid date and meal quantity required.',true);return;}
+  try{
+    await api('/api/meals',{method:'POST',body:JSON.stringify({date,qty,menu:$('#mMenu').value.trim(),notes:$('#mNotes').value.trim(),school_id:window._mealSchool})});
+    notify('Meal record saved successfully!');
+    render();
+  }catch(e){notify(e.message,true);}
+}
+async function delMeal(id){
+  if(!confirm('Delete this meal record?'))return;
+  try{await api('/api/meals/'+id,{method:'DELETE'});notify('Meal record deleted.');render();}catch(e){notify(e.message,true);}
+}
+
+// ---- Students ----
+async function viewStudents(v){
+  await loadSchools();
+  const sid=window._stuSchool||defaultSchoolId();window._stuSchool=sid;
+  const students=sid?await api('/api/students?school_id='+sid+'&include_inactive=true'):[];
+  const picker=canManageAllSchools()?`<div><label>School</label><select id="stuSchool" onchange="window._stuSchool=Number(this.value);render()">${schoolOptions(sid)}</select></div>`:'';
+
+  v.innerHTML=head('Student Roster','Maintain persistent student records with class assignment and status.')
+    +`<div class="card" style="margin-bottom:16px">
+        <h2>Add Student</h2>
+        <div class="formgrid">
+          <div><label>Student Name *</label><input id="stuName" placeholder="Full Name"></div>
+          <div><label>Class / Section *</label><input id="stuCls" value="Class 3A" placeholder="e.g. Class 3A"></div>
+        </div>
+        <button class="btn primary" onclick="addStudent()">Add Student</button>
+      </div>
+      <div class="card">
+        <div class="filters">
+          ${picker}
+          <div style="flex:1"><label>Search</label><input id="stuSearch" placeholder="Filter by name..." oninput="filterStudents()"></div>
+        </div>
+        <div class="table">
+          <table>
+            <thead><tr><th>Name</th><th>Class</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="stuBody">
+              ${students.map(s=>`<tr class="stuRow" data-name="${esc(s.name.toLowerCase())}">
+                <td><b>${esc(s.name)}</b></td>
+                <td>${esc(s.cls)}</td>
+                <td><span class="tag ${s.is_active?'green':'amber'}">${s.is_active?'Active':'Inactive'}</span></td>
+                <td>
+                  <button class="btn small" onclick="editStudent(${s.id},'${esc(s.name)}','${esc(s.cls)}')">Edit</button>
+                  <button class="btn small ${s.is_active?'danger':''}" onclick="toggleStudent(${s.id})">${s.is_active?'Deactivate':'Reactivate'}</button>
+                  <button class="btn small" onclick="viewStudentHist(${s.id},'${esc(s.name)}')">History</button>
+                </td>
+              </tr>`).join('')||`<tr><td colspan="4" class="empty">No students found.</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+}
+
+function filterStudents(){
+  const q=$('#stuSearch').value.toLowerCase();
+  document.querySelectorAll('.stuRow').forEach(r=>{
+    r.style.display=r.dataset.name.includes(q)?'':'none';
+  });
+}
+async function addStudent(){
+  const name=$('#stuName').value.trim(), cls=$('#stuCls').value.trim()||'Class 3A';
+  if(!name){notify('Enter student name.',true);return;}
+  try{await api('/api/students',{method:'POST',body:JSON.stringify({name,cls,school_id:window._stuSchool})});notify('Student added.');render();}catch(e){notify(e.message,true);}
+}
+async function editStudent(id,oldName,oldCls){
+  const name=prompt('Update student name:',oldName);if(!name||!name.trim())return;
+  const cls=prompt('Update class/section:',oldCls);if(!cls||!cls.trim())return;
+  try{await api('/api/students/'+id,{method:'PUT',body:JSON.stringify({name:name.trim(),cls:cls.trim()})});notify('Student updated.');render();}catch(e){notify(e.message,true);}
+}
+async function toggleStudent(id){
+  try{const res=await api('/api/students/'+id,{method:'DELETE'});notify(`Student ${res.status}.`);render();}catch(e){notify(e.message,true);}
+}
+async function viewStudentHist(id,name){
+  try{
+    const hist=await api(`/api/students/${id}/attendance`);
+    alert(`Attendance History for ${name}:\n\n`+(hist.length?hist.map(h=>`${h.date}: ${h.status.toUpperCase()}`).join('\n'):'No attendance records found.'));
+  }catch(e){notify(e.message,true);}
+}
+
+// ---- Smart Reports ----
+async function viewReports(v){
+  await loadSchools();
+  const sid=window._repSchool||defaultSchoolId();window._repSchool=sid;
+  const todayDate=today();
+  const picker=canManageAllSchools()?`<div><label>School</label><select onchange="window._repSchool=Number(this.value);render()">${schoolOptions(sid)}</select></div>`:'';
+
+  v.innerHTML=head('Smart Reports Generator','Generate unified reports directly from database records without duplicate entries.')
+    +`<div class="card" style="margin-bottom:16px">
+        <div class="formgrid">
+          ${picker}
+          <div><label>Report Type</label><select id="repType"><option value="combined">Administrative Overview</option><option value="attendance">Attendance Report</option><option value="meals">Mid-Day Meal Summary</option></select></div>
+          <div><label>Start Date</label><input type="date" id="repStart" value="${todayDate.slice(0,7)+'-01'}"></div>
+          <div><label>End Date</label><input type="date" id="repEnd" value="${todayDate}"></div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn primary" onclick="generateReport()">Generate Report</button>
+          <button class="btn" onclick="window.print()">⎙ Print / Save PDF</button>
+        </div>
+      </div>
+      <div id="repResult"></div>`;
+}
+
+async function generateReport(){
+  const type=$('#repType').value, start=$('#repStart').value, end=$('#repEnd').value;
+  try{
+    const rep=await api(`/api/reports?type=${type}&start=${start}&end=${end}&school_id=${window._repSchool}`);
+    $('#repResult').innerHTML=`
+      <div class="card">
+        <h2>${esc(rep.school_name)} · Report (${esc(rep.start)} to ${esc(rep.end)})</h2>
+        <div class="grid stats" style="margin:16px 0">
+          ${stat('Enrolled Students',rep.total_students)}
+          ${stat('Attendance Days',rep.attendance.length)}
+          ${stat('Total Meals',rep.total_meals.toLocaleString('en-IN'))}
+          ${stat('Teach-Time Saved',rep.reclaimed_minutes+' mins')}
+        </div>
+        ${rep.attendance.length?`<h3>Attendance Summary</h3><div class="table"><table><thead><tr><th>Date</th><th>Present</th><th>Absent</th><th>Leave</th><th>Rate</th></tr></thead><tbody>${rep.attendance.map(a=>`<tr><td>${a.date}</td><td>${a.present}</td><td>${a.absent}</td><td>${a.leave||0}</td><td><b>${a.pct}%</b></td></tr>`).join('')}</tbody></table></div>`:''}
+        ${rep.meals.length?`<h3 style="margin-top:16px">Mid-Day Meals</h3><div class="table"><table><thead><tr><th>Date</th><th>Qty</th><th>Menu</th><th>Notes</th></tr></thead><tbody>${rep.meals.map(m=>`<tr><td>${m.date}</td><td><b>${m.qty}</b></td><td>${esc(m.menu||'—')}</td><td>${esc(m.notes||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}
+      </div>`;
+    notify('Report generated successfully.');
+  }catch(e){notify(e.message,true);}
+}
+
+// ---- Officer summary ----
+async function viewOfficer(v){
+  const s=await api('/api/officer/summary');
+  v.innerHTML=head('Officer View','Reporting completeness and compliance over the last 7 days.')
+    +`<div class="grid stats" style="margin-bottom:16px">
+        ${stat('Schools in view',s.schools.length)}
+        ${stat('Avg. completion',s.avg_completion+'%')}
+        ${stat('Missing days',s.total_missing)}
+        ${stat('Needs follow-up',s.needs_followup)}
+      </div>
+      <div class="card"><div class="table"><table><thead><tr><th>School</th><th>District</th><th>Code</th><th>Students</th><th>7-Day Completion</th><th>Missing Days</th><th>Status</th></tr></thead><tbody>
+        ${s.schools.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.district||'—')}</td><td>${esc(x.code||'—')}</td><td>${x.students}</td><td><b>${x.completion}%</b><div class="progress"><span style="width:${x.completion}%"></span></div></td><td>${x.missing}</td><td><span class="tag ${x.completion>=90?'green':x.completion>=75?'amber':'red'}">${x.completion>=90?'On track':x.completion>=75?'Follow up':'Action Needed'}</span></td></tr>`).join('')}
+      </tbody></table></div></div>`;
+}
+
+// ---- Schools ----
+async function viewSchools(v){
+  const schools=await loadSchools();
+  const admin=me.role==='admin';
+  v.innerHTML=head('Schools','Registered schools in the administrative network.')
+    +(admin?`<div class="card" style="margin-bottom:16px"><h2>Register School</h2><div class="formgrid"><div><label>Name *</label><input id="scName" maxlength="120"></div><div><label>District</label><input id="scDistrict" maxlength="100"></div><div><label>Code</label><input id="scCode" maxlength="50"></div></div><button class="btn primary" onclick="addSchool()">Add School</button></div>`:'')
+    +`<div class="card"><div class="table"><table><thead><tr><th>Name</th><th>District</th><th>Code</th>${admin?'<th>Actions</th>':''}</tr></thead><tbody>${schools.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.district||'—')}</td><td>${esc(s.code||'—')}</td>${admin?`<td><button class="btn small danger" onclick="delSchool(${s.id},'${esc(s.name)}')">Delete</button></td>`:''}</tr>`).join('')||`<tr><td colspan="4" class="empty">No schools.</td></tr>`}</tbody></table></div></div>`;
+}
+async function addSchool(){
+  const name=$('#scName').value.trim();if(!name){notify('School name is required.',true);return;}
+  try{await api('/api/schools',{method:'POST',body:JSON.stringify({name,district:$('#scDistrict').value.trim(),code:$('#scCode').value.trim()})});notify('School added.');render();}catch(e){notify(e.message,true);}
+}
+async function delSchool(id,name){if(!confirm('Delete '+name+' and all records?'))return;try{await api('/api/schools/'+id,{method:'DELETE'});notify('School deleted.');render();}catch(e){notify(e.message,true);}}
+
+// ---- Users ----
+async function viewUsers(v){
+  await loadSchools();
+  const users=await api('/api/admin/users');
+  const smap=Object.fromEntries(schoolsCache.map(s=>[s.id,s.name]));
+  v.innerHTML=head('User Accounts','Manage logins, passwords and role assignments.')
+    +`<div class="card" style="margin-bottom:16px"><h2>Create Account</h2><div class="formgrid">
+        <div><label>Username *</label><input id="usName" maxlength="60"></div>
+        <div><label>Password *</label><input id="usPass" type="text" maxlength="128" placeholder="min 6 chars"></div>
+        <div><label>Full Name</label><input id="usFull" maxlength="120"></div>
+        <div><label>Role *</label><select id="usRole" onchange="toggleUserSchool()">${['teacher','headmaster','officer','admin'].map(r=>`<option>${r}</option>`).join('')}</select></div>
+        <div id="usSchoolWrap"><label>School *</label><select id="usSchool">${schoolOptions()}</select></div>
+      </div><button class="btn primary" onclick="addUser()">Create User</button></div>
+      <div class="card"><div class="table"><table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>School</th><th>Actions</th></tr></thead><tbody>
+        ${users.map(u=>`<tr><td><b>${esc(u.username)}</b></td><td>${esc(u.full_name||'—')}</td><td><span class="tag blue">${esc(u.role)}</span></td><td>${esc(smap[u.school_id]||'—')}</td><td>${u.id===me.id?'<span class="tag">You</span>':`<button class="btn small danger" onclick="delUser(${u.id},'${esc(u.username)}')">Delete</button>`}</td></tr>`).join('')}
+      </tbody></table></div></div>`;
+  toggleUserSchool();
+}
+function toggleUserSchool(){const role=$('#usRole').value;const wrap=$('#usSchoolWrap');if(wrap)wrap.style.display=(role==='teacher'||role==='headmaster')?'':'none';}
+async function addUser(){
+  const role=$('#usRole').value;
+  const body={username:$('#usName').value.trim(),password:$('#usPass').value,full_name:$('#usFull').value.trim(),role};
+  if(role==='teacher'||role==='headmaster')body.school_id=Number($('#usSchool').value);
+  try{await api('/api/admin/users',{method:'POST',body:JSON.stringify(body)});notify('User created.');render();}catch(e){notify(e.message,true);}
+}
+async function delUser(id,name){if(!confirm('Delete user '+name+'?'))return;try{await api('/api/admin/users/'+id,{method:'DELETE'});notify('User deleted.');render();}catch(e){notify(e.message,true);}}
+
+// ---- Audit ----
+async function viewAudit(v){
+  const rows=await api('/api/admin/audit?limit=200');
+  v.innerHTML=head('Audit Log','Immutable system log of user logins and data modifications.')+`<div class="card">${auditTable(rows)}</div>`;
+}
+
+// ---- Boot ----
+(async function boot(){
+  if(token&&me){
+    try{me=await api('/api/auth/me');localStorage.setItem(UKEY,JSON.stringify(me));enterApp();}
+    catch(e){logout();}
+  }
+})();
+</script>
+</body>
+</html>
